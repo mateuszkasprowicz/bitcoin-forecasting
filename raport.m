@@ -1,5 +1,14 @@
-function btcBalance = report(trainFile, testFile)
-    % Load training and testing data
+function btcBalance = raport(trainFile, testFile)
+    %report.m Plots the test period investment decisions (buy/sell) together 
+    % with the price of Bitcoin; saves a plot to strategia.jpg. 
+    % Displays a table with the portfolio performance in Bitcoin for each day. 
+    % Returns a portfolio balance at the end of a specified period.
+    % Inputs:
+    %   trainFile   : a path to a file with training data in a .csv format
+    %   testFile   : a path to a file with test data in a .csv format
+    % Outputs:
+    %   btcBalance  : A portfolio balance at the end of a period in Bitcoin
+
     trainData = readtable(trainFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
     testData = readtable(testFile, MissingRule="error", ExpectedNumVariables=5, ...
@@ -7,7 +16,7 @@ function btcBalance = report(trainFile, testFile)
     
     trainData = table2timetable(trainData);
     testData = table2timetable(testData);
-    testDates = testData.Date
+    testDates = testData.Date;
 
     data = [testData; trainData];
     % Initialize wallet based on training data
@@ -15,20 +24,16 @@ function btcBalance = report(trainFile, testFile)
     btcWallet = 5;
     usdWallet = 0;
 
-    % Store information for plotting
-    dates = testData.Date;
-
     avgPrices = mean([testData.High, testData.Low], 2); 
     buyPoints = [];
     sellPoints = [];
 
-    % here the logic should be that I combine both datasets and each next
-    % day I'm using the test data as well; I'm just doing next day
-    % prediction
     % Apply strategy for each day in the test set
-    for targetDate = 1:height(testData)
-        % Use mymethod to decide on transactions
-        [sellUSD, sellBitcoin] = mymethod(testFile, usdWallet, btcWallet);
+    for i = 1:length(testDates)
+        target = testDates(i);
+        history = timerange("-inf", target, intervalType="openright");
+        
+        [sellUSD, sellBitcoin] = mymethod(data(history), usdWallet, btcWallet);
         
         % Update wallet based on the decision
         currentPrice = avgPrices(i);
@@ -47,6 +52,7 @@ function btcBalance = report(trainFile, testFile)
     end
 
     % Plotting the graph
+    % TODO: Add a separate function for plotting
     figure;
     plot(dates, avgPrices, 'k-');  % Black line for average Bitcoin prices
     hold on;
