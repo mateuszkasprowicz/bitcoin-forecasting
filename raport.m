@@ -1,4 +1,4 @@
-function btcBalance = raport(trainFile, testFile)
+function portfolioValueBtc = raport(trainFile, testFile)
     %report.m Plots the test period investment decisions (buy/sell) together 
     % with the price of Bitcoin; saves a plot to strategia.jpg. 
     % Displays a table with the portfolio performance in Bitcoin for each day. 
@@ -16,39 +16,36 @@ function btcBalance = raport(trainFile, testFile)
     
     trainData = table2timetable(trainData);
     testData = table2timetable(testData);
-    testDates = testData.Date;
+
+    testPeriod = testData.Date;
+    lengthTestPeriod = length(testPeriod);
 
     data = [testData; trainData];
-    % Initialize wallet based on training data
+    avgPrices = mean([testData.High, testData.Low], 2); 
+
     % Assuming the wallet had 5 Bitcoins and $0 at the end of the training period
     btcWallet = 5;
     usdWallet = 0;
 
-    avgPrices = mean([testData.High, testData.Low], 2); 
-    buyPoints = [];
-    sellPoints = [];
+    buyPoints = zeros(lengthTestPeriod);
 
-    % Apply strategy for each day in the test set
-    for i = 1:length(testDates)
-        target = testDates(i);
+    for i = 1:lengthTestPeriod
+        target = testPeriod(i);
         history = timerange("-inf", target, intervalType="openright");
         
         [sellUSD, sellBitcoin] = mymethod(data(history), usdWallet, btcWallet);
         
-        % Update wallet based on the decision
         currentPrice = avgPrices(i);
-        btcWallet = btcWallet + sellUSD / currentPrice - sellBitcoin;
-        usdWallet = usdWallet + sellBitcoin * currentPrice - sellUSD;
-
-        % Record buy/sell points for graph
-        if sellUSD > 0
-            buyPoints = [buyPoints; i];
-        elseif sellBitcoin > 0
-            sellPoints = [sellPoints; i];
+        if sellUSD
+            buyPoints(i) = 1;
+            btcWallet = btcWallet + sellUSD / currentPrice;
+        else
+            usdWallet = usdWallet + sellBitcoin * currentPrice;
         end
 
-        % Display wallet balance in Bitcoins
-        fprintf('Day %d: Wallet balance = %.4f BTC\n', i, btcWallet);
+        currentPortfolioValueBtc = btcWallet + usdWallet * currentPrice;
+
+        fprintf('Day %d: Portofolio value = %.4f BTC\n', i, currentPortfolioValue);
     end
 
     % Plotting the graph
@@ -64,5 +61,5 @@ function btcBalance = raport(trainFile, testFile)
     saveas(gcf, 'strategia.jpg');
 
     % Return the final balance in Bitcoins
-    btcBalance = btcWallet;
+    portfolioValueBtc = currentPortfolioValueBtc;
 end
