@@ -1,9 +1,5 @@
-function [sellUSD, sellBitcoin] = mymethod(filename, usdWallet, btcWallet)
-    % Load data considering bitcoin.csv properties
-    data = readtable(filename, MissingRule="error", ExpectedNumVariables=5, ExtraColumnsRule="error", DecimalSeparator=",");
-    
-    data = table2timetable(data);
-    
+function [sellUSD, sellBitcoin] = mymethod(data, usdWallet, btcWallet) 
+    %TODO: Add data validatio
     % Define the short-term and long-term windows for moving averages
     shortTermWindow = 20;
     longTermWindow = 50;
