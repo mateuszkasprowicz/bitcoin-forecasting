@@ -27,7 +27,8 @@ function portfolioValueBtc = raport(trainFile, testFile)
     btcWallet = 5;
     usdWallet = 0;
 
-    buyPoints = zeros(lengthTestPeriod);
+    buyPoints = false(lengthTestPeriod);
+    sellPoints = false(lengthTestPeriod);
 
     for i = 1:lengthTestPeriod
         target = testPeriod(i);
@@ -37,9 +38,10 @@ function portfolioValueBtc = raport(trainFile, testFile)
         
         currentPrice = avgPrices(i);
         if sellUSD
-            buyPoints(i) = 1;
+            buyPoints(i) = true;
             btcWallet = btcWallet + sellUSD / currentPrice;
-        else
+        elseif sellBitcoin
+            sellPoints(i) = true;
             usdWallet = usdWallet + sellBitcoin * currentPrice;
         end
 
@@ -47,6 +49,8 @@ function portfolioValueBtc = raport(trainFile, testFile)
 
         fprintf('Day %d: Portofolio value = %.4f BTC\n', i, currentPortfolioValueBtc);
     end
+    
+    plottestperiod(avgPrices, testPeriod, buyPoints, sellPoints);
 
     portfolioValueBtc = currentPortfolioValueBtc;
 end
