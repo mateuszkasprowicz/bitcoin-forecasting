@@ -40,17 +40,37 @@ function portfolioValueBtc = raport(trainFile, testFile)
         if sellUSD
             buyPoints(i) = true;
             btcWallet = btcWallet + sellUSD / currentPrice;
+            usdWallet = usdWallet - sellUSD;
         elseif sellBitcoin
             sellPoints(i) = true;
             usdWallet = usdWallet + sellBitcoin * currentPrice;
+            btcWallet = btcWallet - sellBitcoin;
         end
 
         currentPortfolioValueBtc = btcWallet + usdWallet / currentPrice;
 
-        fprintf('Day %d: Portofolio value = %.4f BTC\n', i, currentPortfolioValueBtc);
+        fprintf('Day %d: Portfolio value = %.4f BTC\n', i, currentPortfolioValueBtc);
     end
     
     plottestperiod(avgPrices, testPeriod, buyPoints, sellPoints);
 
     portfolioValueBtc = currentPortfolioValueBtc;
 end
+
+function plottestperiod(avgPrices, dates, buyPoints, sellPoints)
+%PLOTTESTPERIOD Summary of this function goes here
+%   Detailed explanation goes here
+    figure;
+    plot(dates, avgPrices, 'k-');  % Black line for average Bitcoin prices
+    hold on;
+    grid on, grid minor
+    datetick('x', 2,'keepticks')
+    plot(dates(buyPoints), avgPrices(buyPoints), 'ro');  % Red points for buying actions
+    plot(dates(sellPoints), avgPrices(sellPoints), 'go');  % Green points for selling actions
+    title('Bitcoin Trading Strategy');
+    xlabel('Date');
+    ylabel('Average Price (USD)');
+    saveas(gcf, 'strategia.jpg');
+end
+
+
