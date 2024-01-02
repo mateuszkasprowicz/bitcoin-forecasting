@@ -3,8 +3,8 @@
     %for next day
     arguments
         data (:, 4) timetable {mustBeInOhlcFormat}
-        usdWallet (1, 1) {mustBeNonnegative}
-        btcWallet (1, 1) {mustBeNonnegative}
+        usdWallet {mustBeNonnegative}
+        btcWallet {mustBeNonnegative}
     end
     
     shortTermWindow = 20;
