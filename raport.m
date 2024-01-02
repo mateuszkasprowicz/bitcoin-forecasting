@@ -1,13 +1,8 @@
 function portfolioValueBtc = raport(trainFile, testFile)
-    %report.m Plots the test period investment decisions (buy/sell) together 
+    %RAPORT Plots the test period investment decisions (buy/sell) together 
     % with the price of Bitcoin; saves a plot to strategia.jpg. 
     % Displays a table with the portfolio performance in Bitcoin for each day. 
     % Returns a portfolio balance at the end of a specified period.
-    % Inputs:
-    %   trainFile   : a path to a file with training data in a .csv format
-    %   testFile   : a path to a file with test data in a .csv format
-    % Outputs:
-    %   btcBalance  : A portfolio balance at the end of a period in Bitcoin
 
     trainData = readtable(trainFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
@@ -58,8 +53,8 @@ function portfolioValueBtc = raport(trainFile, testFile)
 end
 
 function plottestperiod(avgPrices, dates, buyPoints, sellPoints)
-%PLOTTESTPERIOD Summary of this function goes here
-%   Detailed explanation goes here
+%PLOTTESTPERIOD Plots an average Bitcoin price and buying/selling points
+
     figure;
     plot(dates, avgPrices, 'k-');  % Black line for average Bitcoin prices
     hold on;
