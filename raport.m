@@ -4,6 +4,11 @@ function portfolioValueBtc = raport(trainFile, testFile)
     % Displays a table with the portfolio performance in Bitcoin for each day. 
     % Returns a portfolio balance at the end of a specified period.
 
+    arguments
+        trainFile {mustBeFile}
+        testFile {mustBeFile}
+    end
+
     trainData = readtable(trainFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
     testData = readtable(testFile, MissingRule="error", ExpectedNumVariables=5, ...
