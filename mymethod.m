@@ -1,12 +1,14 @@
- function [sellUSD, sellBitcoin] = mymethod(data, usdWallet, btcWallet) 
+function [sellUSD, sellBitcoin] = mymethod(file, usdWallet, btcWallet) 
     %MYMETHOD Implements trading strategy. Returns selling/buying decision
     %for next day
     arguments
-        data (:, 4) timetable {mustBeInOhlcFormat}
+        file {mustBeFile}
         usdWallet {mustBeNonnegative}
         btcWallet {mustBeNonnegative}
     end
-    
+    data = readtimetable(file, MissingRule="error", ExpectedNumVariables=5, ...
+        ExtraColumnsRule="error");
+
     shortTermWindow = 20;
     longTermWindow = 50;
 

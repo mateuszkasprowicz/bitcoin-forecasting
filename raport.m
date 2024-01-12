@@ -9,18 +9,16 @@ function portfolioValueBtc = raport(trainFile, testFile)
         testFile {mustBeFile}
     end
 
-    trainData = readtable(trainFile, MissingRule="error", ExpectedNumVariables=5, ...
+    trainData = readtimetable(trainFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
-    testData = readtable(testFile, MissingRule="error", ExpectedNumVariables=5, ...
+    testData = readtimetable(testFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
-    
-    trainData = table2timetable(trainData);
-    testData = table2timetable(testData);
+
+    tmpFilename = [tempname,'.csv'];
 
     testPeriod = testData.Date;
     lengthTestPeriod = length(testPeriod);
 
-    data = [testData; trainData];
     avgPrices = mean([testData.High, testData.Low], 2); 
 
     % Assuming the wallet had 5 Bitcoins and $0 at the end of the training period
@@ -33,8 +31,11 @@ function portfolioValueBtc = raport(trainFile, testFile)
     for i = 1:lengthTestPeriod
         target = testPeriod(i);
         history = timerange("-inf", target);
+
+        data = [testData; trainData(history, :)];
+        writetimetable(data, tmpFilename)
         
-        [sellUSD, sellBitcoin] = mymethod(data(history, :), usdWallet, btcWallet);
+        [sellUSD, sellBitcoin] = mymethod(tmpFilename, usdWallet, btcWallet);
         
         currentPrice = avgPrices(i);
         if sellUSD
