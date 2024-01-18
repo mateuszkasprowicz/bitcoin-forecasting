@@ -7,7 +7,9 @@ function [sellUSD, sellBitcoin] = mymethod(file, usdWallet, btcWallet)
         btcWallet {mustBeNonnegative}
     end
     data = readtimetable(file, MissingRule="error", ExpectedNumVariables=5, ...
-        ExtraColumnsRule="error");
+        DecimalSeparator=".", ExtraColumnsRule="error");
+
+    mustBeInOhlcFormat(data)
 
     shortTermWindow = 20;
     longTermWindow = 50;
@@ -28,11 +30,20 @@ function [sellUSD, sellBitcoin] = mymethod(file, usdWallet, btcWallet)
     end
  end
 
- function mustBeInOhlcFormat(timetbl)
+function mustBeInOhlcFormat(timetbl)
     correct_columns = {"Close","High","Low", "Open"};
     if ~isequal(sort(timetbl.Properties.VariableNames), correct_columns)
         msg = "The timetable must have following columns: Close, High, Low, and Open";
         error(msg)
     end
- end
+end
+
+function out = convertStringToNumeric(column)
+    if isstring(column)
+        out = str2double(strrep(column, ',', '.'));
+    else
+        out = column;
+    end
+end
+
 

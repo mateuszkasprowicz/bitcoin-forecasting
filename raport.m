@@ -34,7 +34,7 @@ function portfolioValueBtc = raport(trainFile, testFile)
         updatedTrainData = [testData; trainData(history, :)];
         writetimetable(updatedTrainData, tmpFile)
         
-        [sellUSD, sellBitcoin] = mymethod(tmpFilePath, usdWallet, btcWallet);
+        [sellUSD, sellBitcoin] = mymethod(tmpFile, usdWallet, btcWallet);
         
         currentPrice = avgPrices(i);
         if sellUSD
