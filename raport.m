@@ -14,14 +14,13 @@ function portfolioValueBtc = raport(trainFile, testFile)
     testData = readtimetable(testFile, MissingRule="error", ExpectedNumVariables=5, ...
         ExtraColumnsRule="error", DecimalSeparator=",");
 
-    tmpFilePath = [tempname,'.csv'];
+    tmpFile = [tempname,'.csv'];
 
     testPeriod = testData.Date;
     lengthTestPeriod = length(testPeriod);
 
     avgPrices = mean([testData.High, testData.Low], 2); 
 
-    % Assuming the wallet had 5 Bitcoins and $0 at the end of the training period
     btcWallet = 5;
     usdWallet = 0;
 
@@ -32,8 +31,8 @@ function portfolioValueBtc = raport(trainFile, testFile)
         target = testPeriod(i);
         history = timerange("-inf", target);
 
-        data = [testData; trainData(history, :)];
-        writetimetable(data, tmpFilePath)
+        updatedTrainData = [testData; trainData(history, :)];
+        writetimetable(updatedTrainData, tmpFile)
         
         [sellUSD, sellBitcoin] = mymethod(tmpFilePath, usdWallet, btcWallet);
         
@@ -57,19 +56,19 @@ function portfolioValueBtc = raport(trainFile, testFile)
 
     portfolioValueBtc = currentPortfolioValueBtc;
 
-    delete(tmpFilePath);
+    delete(tmpFile);
 end
 
 function plottestperiod(avgPrices, dates, buyPoints, sellPoints)
 %PLOTTESTPERIOD Plots an average Bitcoin price and buying/selling points
 
     figure;
-    plot(dates, avgPrices, 'k-');  % Black line for average Bitcoin prices
+    plot(dates, avgPrices, 'k-');
     hold on;
     grid on, grid minor
     datetick('x', 2,'keepticks')
-    plot(dates(buyPoints), avgPrices(buyPoints), 'ro');  % Red points for buying actions
-    plot(dates(sellPoints), avgPrices(sellPoints), 'go');  % Green points for selling actions
+    plot(dates(buyPoints), avgPrices(buyPoints), 'ro');
+    plot(dates(sellPoints), avgPrices(sellPoints), 'go');
     title('Bitcoin Trading Strategy');
     xlabel('Date');
     ylabel('Average Price (USD)');
