@@ -37,13 +37,3 @@ function mustBeInOhlcFormat(timetbl)
         error(msg)
     end
 end
-
-function out = convertStringToNumeric(column)
-    if isstring(column)
-        out = str2double(strrep(column, ',', '.'));
-    else
-        out = column;
-    end
-end
-
-
