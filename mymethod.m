@@ -11,23 +11,8 @@ function [sellUSD, sellBitcoin] = mymethod(file, usdWallet, btcWallet)
 
     mustBeInOhlcFormat(data)
 
-    shortTermWindow = 20;
-    longTermWindow = 50;
-
-    shortTermMA = movmean(data.Close, shortTermWindow);
-    longTermMA = movmean(data.Close, longTermWindow);
-
-    lastShortTermMA = shortTermMA(end);
-    lastLongTermMA = longTermMA(end);
-
     sellUSD = 0;
-    sellBitcoin = 0;
-
-    if lastShortTermMA > lastLongTermMA
-        sellUSD = usdWallet * 0.1;
-    elseif lastShortTermMA < lastLongTermMA
-        sellBitcoin = btcWallet * 0.1;
-    end
+    sellBitcoin = btcWallet * 0.1;
  end
 
 function mustBeInOhlcFormat(timetbl)
